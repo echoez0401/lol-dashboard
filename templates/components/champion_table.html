@@ -1,0 +1,37 @@
+<table class="champion-table" id="champion-table">
+    <thead>
+        <tr>
+            <th class="sortable" data-sort="championName">チャンピオン</th>
+            <th class="sortable" data-sort="games">試合数</th>
+            <th class="sortable" data-sort="winRate">勝率</th>
+            <th class="sortable" data-sort="avgKDA">KDA</th>
+            <th class="sortable" data-sort="avgDamageDealt">平均与ダメ</th>
+            <th class="sortable" data-sort="avgDamageTaken">平均被ダメ</th>
+        </tr>
+    </thead>
+    <tbody id="champion-table-body">
+        {% for stat in champion_stats %}
+        <tr>
+            <td class="champion-cell">
+                <img
+                    src="https://ddragon.leagueoflegends.com/cdn/{{ ddragon_version }}/img/champion/{{ stat.championName }}.png"
+                    alt="{{ stat.championName }}"
+                    onerror="this.src='assets/placeholder.png'"
+                    class="champion-img"
+                >
+                <span>{{ stat.championName }}</span>
+            </td>
+            <td>{{ stat.games }}</td>
+            <td>
+                <span class="{% if stat.winRate >= 50 %}win-rate{% else %}loss-rate{% endif %}">
+                    {{ stat.winRate }}%
+                </span>
+                <span class="win-loss-text">({{ stat.wins }}W-{{ stat.losses }}L)</span>
+            </td>
+            <td>{{ stat.avgKDA }}</td>
+            <td>{{ "{:,}".format(stat.avgDamageDealt|int) }}</td>
+            <td>{{ "{:,}".format(stat.avgDamageTaken|int) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

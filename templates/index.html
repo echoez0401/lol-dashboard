@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ summoner.name }} - LoL戦績ダッシュボード{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- ヘッダー -->
+    <header class="dashboard-header">
+        <h1>{{ summoner.name }}</h1>
+        <p class="last-update">最終更新: {{ last_update }}</p>
+    </header>
+
+    <!-- フィルターバー -->
+    <section class="filters">
+        <div class="filter-group">
+            <label for="period-filter">期間:</label>
+            <select id="period-filter">
+                <option value="all">全期間</option>
+                <option value="last_7_days">最近7日</option>
+                <option value="last_30_days">最近30日</option>
+                <option value="this_week">今週</option>
+                <option value="last_week">先週</option>
+                {% for patch in available_patches %}
+                <option value="patch_{{ patch }}">パッチ {{ patch }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="mode-filter">モード:</label>
+            <select id="mode-filter">
+                <option value="all">全モード</option>
+                {% for mode in available_modes %}
+                <option value="{{ mode.id }}">{{ mode.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </section>
+
+    <!-- チャンピオン統計セクション -->
+    <section class="champion-stats">
+        <h2>チャンピオン統計</h2>
+        {% include "components/champion_table.html" %}
+    </section>
+
+    <!-- 試合履歴セクション -->
+    <section class="match-history">
+        <h2>試合履歴</h2>
+        {% include "components/match_history.html" %}
+    </section>
+
+    <!-- 試合詳細モーダル -->
+    {% include "components/match_detail_modal.html" %}
+</div>
+{% endblock %}

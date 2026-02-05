@@ -1,1 +1,75 @@
-# GitHub Actions workflow for updating dashboard
+name: Update Dashboard
+
+# トリガー: 手動実行
+on:
+  workflow_dispatch:
+
+# 権限設定
+permissions:
+  contents: write      # git push用
+  pages: write         # GitHub Pagesデプロイ用
+  id-token: write      # GitHub Pagesデプロイ用
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: リポジトリをチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 2: Python 3.11をセットアップ
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      # Step 3: 依存関係をキャッシュ
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # Step 4: 依存パッケージをインストール
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 5: 試合データを取得
+      - name: Fetch match data
+        env:
+          RIOT_API_KEY: ${{ secrets.RIOT_API_KEY }}
+          SUMMONER_NAME: ${{ secrets.SUMMONER_NAME }}
+        run: python src/fetch_matches.py
+
+      # Step 6: HTMLを生成
+      - name: Generate HTML
+        run: python src/generate_html.py
+
+      # Step 7: 変更をコミット・プッシュ
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/ docs/
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update dashboard $(date '+%Y-%m-%d %H:%M:%S')"
+          git push
+
+      # Step 8: GitHub Pagesにデプロイ
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./docs
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v2

@@ -1,0 +1,35 @@
+<div class="match-list" id="match-list">
+    {% for match in recent_matches %}
+    <div class="match-card {% if match.myData.win %}victory{% else %}defeat{% endif %}"
+         data-match-id="{{ match.matchId }}"
+         onclick="showMatchDetail('{{ match.matchId }}')">
+        <div class="match-result">
+            <span class="result-badge">
+                {% if match.myData.win %}勝利{% else %}敗北{% endif %}
+            </span>
+        </div>
+        <div class="match-champion">
+            <img
+                src="https://ddragon.leagueoflegends.com/cdn/{{ ddragon_version }}/img/champion/{{ match.myData.championName }}.png"
+                alt="{{ match.myData.championName }}"
+                onerror="this.src='assets/placeholder.png'"
+                class="champion-img-small"
+            >
+        </div>
+        <div class="match-kda">
+            <span class="kda-score">
+                {{ match.myData.kills }}/{{ match.myData.deaths }}/{{ match.myData.assists }}
+            </span>
+            <span class="kda-ratio">
+                ({{ "%.2f"|format((match.myData.kills + match.myData.assists) / (match.myData.deaths if match.myData.deaths > 0 else 1)) }} KDA)
+            </span>
+        </div>
+        <div class="match-info">
+            <div class="match-mode">{{ match.queueId }}</div>
+            <div class="match-duration">
+                {{ (match.gameDuration // 60) }}分{{ (match.gameDuration % 60) }}秒
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
