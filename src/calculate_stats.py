@@ -73,7 +73,7 @@ def calculate_champion_stats(matches: list[dict], period: str = "all", mode: str
         win_rate = (wins / games * 100) if games > 0 else 0
 
         # 平均KDA比率（ゼロ除算回避）
-        avg_kda = ((total_kills + total_assists) / (total_deaths or 1)) / games if games > 0 else 0
+        avg_kda = (total_kills + total_assists) / (total_deaths or 1)
 
         # 平均ダメージ
         avg_damage_dealt = agg["totalDamageDealt"] / games if games > 0 else 0

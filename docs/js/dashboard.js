@@ -409,7 +409,7 @@ function renderTeamTable(players) {
 
         // ルーン画像（キーストーンのみ）
         const keystoneId = player.runes.primary[0];
-        const runeHtml = `<img src="https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/${keystoneId}.png"
+        const runeHtml = `<img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/styles/${keystoneId}/${keystoneId}.png"
                                alt="Rune ${keystoneId}"
                                style="width: 32px; height: 32px;"
                                onerror="this.style.display='none'">`;
